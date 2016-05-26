@@ -10,7 +10,7 @@ describe Question do
       question.should have(1).error_on :text
     end
     it "#is_mandantory == false by default" do
-      question.mandatory?.should be_false
+      question.mandatory?.should be_falsey
     end
     it "converts #pick to string" do
       question.pick.should == "none"
@@ -28,12 +28,12 @@ describe Question do
     end
     it "#part_of_group? and #solo? are aware of question groups" do
       question.question_group = FactoryGirl.create(:question_group)
-      question.solo?.should be_false
-      question.part_of_group?.should be_true
+      question.solo?.should be_falsey
+      question.part_of_group?.should be_truthy
 
       question.question_group = nil
-      question.solo?.should be_true
-      question.part_of_group?.should be_false
+      question.solo?.should be_truthy
+      question.part_of_group?.should be_falsey
     end
   end
 
@@ -64,7 +64,7 @@ describe Question do
       dependency.stub(:is_met?).with(response_set).and_return true
     end
     it "checks its dependency" do
-      question.triggered?(response_set).should be_true
+      question.triggered?(response_set).should be_truthy
     end
     it "deletes its dependency when deleted" do
       d_id = question.dependency.id

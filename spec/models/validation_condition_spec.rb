@@ -54,16 +54,16 @@ describe ValidationCondition, "validating responses" do
   end
 
   it "should validate a response by regexp" do
-    test_var({:operator => "=~", :regexp => /^[a-z]{1,6}$/.to_s}, {:response_class => "string"}, {:string_value => "clear"}).should be_true
-    test_var({:operator => "=~", :regexp => /^[a-z]{1,6}$/.to_s}, {:response_class => "string"}, {:string_value => "foobarbaz"}).should be_false
+    test_var({:operator => "=~", :regexp => /^[a-z]{1,6}$/.to_s}, {:response_class => "string"}, {:string_value => "clear"}).should be_truthy
+    test_var({:operator => "=~", :regexp => /^[a-z]{1,6}$/.to_s}, {:response_class => "string"}, {:string_value => "foobarbaz"}).should be_falsey
   end
   it "should validate a response by integer comparison" do
-    test_var({:operator => ">", :integer_value => 3}, {:response_class => "integer"}, {:integer_value => 4}).should be_true
-    test_var({:operator => "<=", :integer_value => 256}, {:response_class => "integer"}, {:integer_value => 512}).should be_false
+    test_var({:operator => ">", :integer_value => 3}, {:response_class => "integer"}, {:integer_value => 4}).should be_truthy
+    test_var({:operator => "<=", :integer_value => 256}, {:response_class => "integer"}, {:integer_value => 512}).should be_falsey
   end
   it "should validate a response by (in)equality" do
-    test_var({:operator => "!=", :datetime_value => Date.today + 1}, {:response_class => "date"}, {:datetime_value => Date.today}).should be_true
-    test_var({:operator => "==", :string_value => "foo"}, {:response_class => "string"}, {:string_value => "foo"}).should be_true
+    test_var({:operator => "!=", :datetime_value => Date.today + 1}, {:response_class => "date"}, {:datetime_value => Date.today}).should be_truthy
+    test_var({:operator => "==", :string_value => "foo"}, {:response_class => "string"}, {:string_value => "foo"}).should be_truthy
   end
   it "should represent itself as a hash" do
     @v = FactoryGirl.create(:validation_condition, :rule_key => "A")
@@ -84,15 +84,15 @@ describe ValidationCondition, "validating responses by other responses" do
     return v.is_valid?(r)
   end
   it "should validate a response by integer comparison" do
-    test_var({:operator => ">"}, {:response_class => "integer"}, {:integer_value => 4}, {:response_class => "integer"}, {:integer_value => 3}).should be_true
-    test_var({:operator => "<="}, {:response_class => "integer"}, {:integer_value => 512}, {:response_class => "integer"}, {:integer_value => 4}).should be_false
+    test_var({:operator => ">"}, {:response_class => "integer"}, {:integer_value => 4}, {:response_class => "integer"}, {:integer_value => 3}).should be_truthy
+    test_var({:operator => "<="}, {:response_class => "integer"}, {:integer_value => 512}, {:response_class => "integer"}, {:integer_value => 4}).should be_falsey
   end
   it "should validate a response by (in)equality" do
-    test_var({:operator => "!="}, {:response_class => "date"}, {:datetime_value => Date.today}, {:response_class => "date"}, {:datetime_value => Date.today + 1}).should be_true
-    test_var({:operator => "=="}, {:response_class => "string"}, {:string_value => "donuts"}, {:response_class => "string"}, {:string_value => "donuts"}).should be_true
+    test_var({:operator => "!="}, {:response_class => "date"}, {:datetime_value => Date.today}, {:response_class => "date"}, {:datetime_value => Date.today + 1}).should be_truthy
+    test_var({:operator => "=="}, {:response_class => "string"}, {:string_value => "donuts"}, {:response_class => "string"}, {:string_value => "donuts"}).should be_truthy
   end
   it "should not validate a response by regexp" do
-    test_var({:operator => "=~"}, {:response_class => "date"}, {:datetime_value => Date.today}, {:response_class => "date"}, {:datetime_value => Date.today + 1}).should be_false
-    test_var({:operator => "=~"}, {:response_class => "string"}, {:string_value => "donuts"}, {:response_class => "string"}, {:string_value => "donuts"}).should be_false
+    test_var({:operator => "=~"}, {:response_class => "date"}, {:datetime_value => Date.today}, {:response_class => "date"}, {:datetime_value => Date.today + 1}).should be_falsey
+    test_var({:operator => "=~"}, {:response_class => "string"}, {:string_value => "donuts"}, {:response_class => "string"}, {:string_value => "donuts"}).should be_falsey
   end
 end

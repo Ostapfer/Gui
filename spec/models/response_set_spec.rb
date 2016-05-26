@@ -43,7 +43,7 @@ describe ResponseSet do
     @response_set.completed_at.should be_nil
     @response_set.complete!
     @response_set.completed_at.should_not be_nil
-    @response_set.completed_at.is_a?(Time).should be_true
+    @response_set.completed_at.is_a?(Time).should be_truthy
     @response_set.should be_complete
   end
 
@@ -314,17 +314,17 @@ describe ResponseSet, "as a quiz" do
 
   it "should report correctness if it is a quiz" do
     generate_responses(3, "quiz", "correct")
-    @response_set.correct?.should be_true
+    @response_set.correct?.should be_truthy
     @response_set.correctness_hash.should == {:questions => 3, :responses => 3, :correct => 3}
   end
   it "should report incorrectness if it is a quiz" do
     generate_responses(3, "quiz", "incorrect")
-    @response_set.correct?.should be_false
+    @response_set.correct?.should be_falsey
     @response_set.correctness_hash.should == {:questions => 3, :responses => 3, :correct => 0}
   end
   it "should report correct if it isn't a quiz" do
     generate_responses(3, "non-quiz")
-    @response_set.correct?.should be_true
+    @response_set.correct?.should be_truthy
     @response_set.correctness_hash.should == {:questions => 3, :responses => 3, :correct => 3}
   end
 end
@@ -345,24 +345,24 @@ describe ResponseSet, "with mandatory questions" do
   end
   it "should report progress without mandatory questions" do
     generate_responses(3)
-    @response_set.mandatory_questions_complete?.should be_true
+    @response_set.mandatory_questions_complete?.should be_truthy
     @response_set.progress_hash.should == {:questions => 3, :triggered => 3, :triggered_mandatory => 0, :triggered_mandatory_completed => 0}
   end
   it "should report progress with mandatory questions" do
     generate_responses(3, "mandatory", "responded")
-    @response_set.mandatory_questions_complete?.should be_true
+    @response_set.mandatory_questions_complete?.should be_truthy
     @response_set.progress_hash.should == {:questions => 3, :triggered => 3, :triggered_mandatory => 3, :triggered_mandatory_completed => 3}
   end
   it "should report progress with mandatory questions" do
     generate_responses(3, "mandatory", "not-responded")
-    @response_set.mandatory_questions_complete?.should be_false
+    @response_set.mandatory_questions_complete?.should be_falsey
     @response_set.progress_hash.should == {:questions => 3, :triggered => 3, :triggered_mandatory => 3, :triggered_mandatory_completed => 0}
   end
   it "should ignore labels and images" do
     generate_responses(3, "mandatory", "responded")
     FactoryGirl.create(:question, :survey_section => @section, :display_type => "label", :is_mandatory => true)
     FactoryGirl.create(:question, :survey_section => @section, :display_type => "image", :is_mandatory => true)
-    @response_set.mandatory_questions_complete?.should be_true
+    @response_set.mandatory_questions_complete?.should be_truthy
     @response_set.progress_hash.should == {:questions => 5, :triggered => 5, :triggered_mandatory => 5, :triggered_mandatory_completed => 5}
   end
 end
@@ -394,12 +394,12 @@ describe ResponseSet, "with mandatory, dependent questions" do
   end
   it "should report progress without mandatory questions" do
     generate_responses(3, "mandatory", "dependent")
-    @response_set.mandatory_questions_complete?.should be_true
+    @response_set.mandatory_questions_complete?.should be_truthy
     @response_set.progress_hash.should == {:questions => 4, :triggered => 1, :triggered_mandatory => 1, :triggered_mandatory_completed => 1}
   end
   it "should report progress with mandatory questions" do
     generate_responses(3, "mandatory", "dependent", "triggered")
-    @response_set.mandatory_questions_complete?.should be_true
+    @response_set.mandatory_questions_complete?.should be_truthy
     @response_set.progress_hash.should == {:questions => 4, :triggered => 4, :triggered_mandatory => 4, :triggered_mandatory_completed => 4}
   end
 end
@@ -423,7 +423,7 @@ describe ResponseSet, "exporting csv" do
   it "should export a string with responses" do
     @response_set.responses.size.should == 2
     csv = @response_set.to_csv
-    csv.is_a?(String).should be_true
+    csv.is_a?(String).should be_truthy
     csv.should match "question.short_text"
     csv.should match "What flavor?"
     csv.should match /pecan pie/

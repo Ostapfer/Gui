@@ -8,7 +8,7 @@ end
 
 require 'rspec/rails'
 require 'rspec/autorun'
-
+require 'rspec/collection_matchers'
 require 'capybara/rails'
 require 'capybara/rspec'
 require 'capybara/poltergeist'
@@ -26,7 +26,7 @@ Dir["./spec/support/**/*.rb"].sort.each {|f| require f}
 Capybara.app = Rack::ShowExceptions.new(Testbed::Application)
 # Checks for pending migrations before tests are run.
 # If you are not using ActiveRecord, you can remove this line.
-ActiveRecord::Migration.maintain_test_schema! if ::Rails.version >= "4.0" && defined?(ActiveRecord::Migration)
+#ActiveRecord::Migration.maintain_test_schema! if ::Rails.version >= "4.0" && defined?(ActiveRecord::Migration)
 
 
 Capybara.register_driver :poltergeist do |app|
@@ -43,9 +43,9 @@ RSpec.configure do |config|
   config.include SurveyorAPIHelpers
   config.include SurveyorUIHelpers
   config.include WaitForAjax
-
+  config.include RSpec::Rails::ViewRendering
   config.treat_symbols_as_metadata_keys_with_true_values = true
-
+  config.infer_spec_type_from_file_location!
   # == Mock Framework
   #
   # If you prefer to use mocha, flexmock or RR, uncomment the appropriate line:
@@ -100,7 +100,7 @@ RSpec.configure do |config|
     DatabaseCleaner.strategy = :transaction
   end
 
-  config.before :each do
+  config.before :each do |example|
     if example.metadata[:clean_with_truncation] || example.metadata[:js]
       DatabaseCleaner.strategy = :truncation
     else

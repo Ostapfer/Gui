@@ -15,6 +15,7 @@ describe "ui interactions" do
     end
     it "dropdown" do
       response_set = start_survey('Everything')
+      page.driver.console_messages("================================================================================== #{response_set}")
       expect(page).to have_content("What color is the sky right now?")
       within question("3") do
         select "sunset red", from: "What color is the sky right now?"
